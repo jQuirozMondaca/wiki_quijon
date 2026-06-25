@@ -26,8 +26,8 @@ export default function App() {
         entries.map(async ([path, resolver]) => {
           let raw = await resolver();
           // Normalize image paths: ../public/... or ../img_quijon/... -> /...
-          raw = raw.replace(/\.\.\/(?:public\/)?/g, '/');
-          const name = path.split('/').pop().replace('.md', '');
+          raw = raw.replace(/\.\.\/(?:public\/)?/g, "/");
+          const name = path.split("/").pop().replace(".md", "");
           const match = raw.match(/^#\s+(.+)$/m);
           const title = match ? match[1].trim() : name;
           return { id: name, title, content: raw };
@@ -134,9 +134,9 @@ export default function App() {
                       <img
                         {...props}
                         src={
-                          props.src && props.src.startsWith('/')
+                          props.src && props.src.startsWith("/")
                             ? props.src
-                            : '/' + props.src
+                            : "/" + props.src
                         }
                         className="max-w-full rounded-md shadow-neon-cyan"
                         alt={props.alt}
@@ -147,7 +147,9 @@ export default function App() {
                   {current.content}
                 </ReactMarkdown>
               ) : (
-                <div className="text-cyan-400">Cargando contenido markdown...</div>
+                <div className="text-cyan-400">
+                  Cargando contenido markdown...
+                </div>
               )}
             </article>
           </section>
