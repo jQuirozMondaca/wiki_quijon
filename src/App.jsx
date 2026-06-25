@@ -19,14 +19,43 @@ export default function App() {
     import: "default",
   });
 
+  // glob for images inside doc_quijon so we can resolve their dev URLs
+  const imageModules = import.meta.glob("../doc_quijon/img_quijon/*", {
+    query: "?url",
+    import: "default",
+  });
+
   useEffect(() => {
     const load = async () => {
       const entries = Object.entries(modules);
+
+      // resolve image URLs
+      const imgEntries = Object.entries(imageModules);
+      const imgMap = {};
+      for (const [imgPath, imgResolver] of imgEntries) {
+        try {
+          const url = await imgResolver();
+          const file = imgPath.split("/").pop();
+          imgMap[file] = url;
+        } catch (e) {
+          // ignore resolution errors
+        }
+      }
+
       const files = await Promise.all(
         entries.map(async ([path, resolver]) => {
           let raw = await resolver();
-          // Normalize image paths: ../public/... or ../img_quijon/... -> /...
+
+          // Replace references to img_quijon/<file> with the resolved dev URL
+          raw = raw.replace(/img_quijon\/([^\)\n\r]+)/g, (m, file) => {
+            const f = file.trim();
+            if (imgMap[f]) return imgMap[f];
+            return "/doc_quijon/img_quijon/" + f;
+          });
+
+          // Normalize ../public/ or ../ references to root as fallback
           raw = raw.replace(/\.\.\/(?:public\/)?/g, "/");
+
           const name = path.split("/").pop().replace(".md", "");
           const match = raw.match(/^#\s+(.+)$/m);
           const title = match ? match[1].trim() : name;
