@@ -24,8 +24,10 @@ export default function App() {
       const entries = Object.entries(modules);
       const files = await Promise.all(
         entries.map(async ([path, resolver]) => {
-          const raw = await resolver();
-          const name = path.split("/").pop().replace(".md", "");
+          let raw = await resolver();
+          // Normalize image paths: ../public/... or ../img_quijon/... -> /...
+          raw = raw.replace(/\.\.\/(?:public\/)?/g, '/');
+          const name = path.split('/').pop().replace('.md', '');
           const match = raw.match(/^#\s+(.+)$/m);
           const title = match ? match[1].trim() : name;
           return { id: name, title, content: raw };
@@ -74,7 +76,7 @@ export default function App() {
 
       <main className="p-6">
         <div className="grid grid-cols-[260px_1fr] gap-6">
-          <aside className="h-[calc(100vh-96px)] sticky top-6 rounded-xl border border-gray-800/60 bg-black/20 p-4 backdrop-blur-sm">
+          <aside className="h-[calc(100vh-96px)] sticky top-6 rounded-xl border border-gray-800/60 bg-black/20 p-4 backdrop-blur-sm overflow-y-auto">
             <nav className="flex flex-col gap-3">
               {pages.map((p) => {
                 const Icon = getIcon(p.id);
@@ -125,11 +127,27 @@ export default function App() {
 
             <article className="min-h-[420px] rounded-lg border border-gray-800/50 p-6 bg-slate-900/30 shadow-[0_10px_30px_rgba(2,6,23,0.6)] prose prose-invert max-w-none">
               {current ? (
-                <ReactMarkdown>{current.content}</ReactMarkdown>
+                <ReactMarkdown
+                  components={{
+                    img: ({ node, ...props }) => (
+                      // ensure src is absolute if necessary
+                      <img
+                        {...props}
+                        src={
+                          props.src && props.src.startsWith('/')
+                            ? props.src
+                            : '/' + props.src
+                        }
+                        className="max-w-full rounded-md shadow-neon-cyan"
+                        alt={props.alt}
+                      />
+                    ),
+                  }}
+                >
+                  {current.content}
+                </ReactMarkdown>
               ) : (
-                <div className="text-cyan-400">
-                  Cargando contenido markdown...
-                </div>
+                <div className="text-cyan-400">Cargando contenido markdown...</div>
               )}
             </article>
           </section>
