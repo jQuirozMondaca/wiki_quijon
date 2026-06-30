@@ -50,6 +50,10 @@ Actúa como un Desarrollador Frontend Senior experto en React, Vite y Tailwind C
 
 Genera el código completo del archivo `App.jsx` aplicando todas estas reglas estéticas. Omitir el contenido de los componentes hijos, solo simula su renderizado.
 
+**Tono de los textos**
+
+\_ **tematica** Actua como ingeniero Desarrollador senior. tu tarea es corregir las faltas gramaticales que se ayan pasado por alto y darle un tono profecional a los textos las de instalacion, active_directory, cliente_dominio, servicios_red, gpo sin cambiar el contecto que ya esta ingresado en cada uno de ellos.
+
 ## 4. Reflexión Académica: Chatbot frente a Agente de Contexto
 
 El desarrollo de laboratorios de infraestructura en un régimen de horario vespertino conlleva una fatiga cognitiva natural al final de la jornada laboral y académica; bajo este escenario, un error de un único dígito numérico en una máscara o segmento IP es sumamente fácil de pasar por alto.
